@@ -1,0 +1,42 @@
+<header class="header">
+  <div class="registrer">
+    <form [formGroup]="formRegistro" (ngSubmit)="registrarse()" class="formulario">
+      <!--formgroup es el que conecta este form con el componente de registro, cuando se llenan los inputs lo valida para crear el usuario-->
+      <img src="/assets/images/logo.jpg" alt="" class="logo">
+      <h1>CREAR CUENTA</h1>
+      <div class="inputs">
+        <i class="fa-solid fa-circle-user"></i>
+        <input type="text" id="nombres" name="nombres" autocomplete="name" formControlName="nombres"
+          placeholder="Nombres" class="input" required>
+        <!--formcontrolname es el que comprueba lo que se puso en ese formgroup del componente login-->
+      </div>
+      <div class="inputs">
+        <i class="fa-solid fa-circle-user"></i>
+        <input type="text" id="apellidos" name="apellidos" autocomplete="family-name" formControlName="apellidos"
+          placeholder="Apellidos" class="input" required>
+      </div>
+      <div class="inputs">
+        <i class="fa-solid fa-envelope"></i>
+        <input type="email" id="Email" name="Email" autocomplete="email" formControlName="email" placeholder="Email"
+          class="input" required>
+      </div>
+      <div class="inputs">
+        <i class="fa-solid fa-phone"></i>
+        <input type="tel" id="telefono" name="telefono" formControlName="telefono" placeholder="Teléfono" class="input"
+          required>
+      </div>
+      <div class="inputs">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="password" name="password" autocomplete="current-password" formControlName="password"
+          placeholder="Contraseña" class="input" required>
+        <button type="button" class="ojo">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+      </div>
+      <button type="submit" class="boton">Registrate</button>
+      <div class="login">
+        <p>Ya tienes una cuenta? <a href="" (click)="iniciarSesion()">Inicia Sesión</a></p>
+      </div>
+    </form>
+  </div>
+</header>

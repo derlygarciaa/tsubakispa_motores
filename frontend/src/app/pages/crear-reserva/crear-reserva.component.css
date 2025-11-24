@@ -1,0 +1,75 @@
+/* Modal de Usuario */
+.user-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+
+.user-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.user-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.user-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--rumas-gray-200);
+}
+
+.user-modal-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--rumas-gray-900);
+    margin: 0;
+}
+
+.user-modal-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--rumas-gray-400);
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.user-modal-close:hover {
+    background: var(--rumas-gray-100);
+    color: var(--rumas-gray-900);
+}
+
+.user-modal-body {
+    padding: 1.5rem;
+}

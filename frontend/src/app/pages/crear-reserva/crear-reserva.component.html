@@ -1,0 +1,91 @@
+<!-- Modal de Usuario -->
+<div class="user-modal" id="userModal">
+  <div class="user-modal-overlay" onclick="closeUserModal()"></div>
+  <div class="user-modal-content">
+    <div class="user-modal-header">
+      <h2 id="userModalTitle">Crear Usuario</h2>
+      <button class="user-modal-close" onclick="closeUserModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <form id="userForm" class="user-modal-body">
+      <input type="hidden" id="userId" name="id">
+
+      <div class="form-group">
+        <label for="userName">Nombre Completo *</label>
+        <input type="text" id="userName" name="name" class="form-input" required>
+        <div id="userNameError" class="form-error hidden">
+          <i class="fas fa-exclamation-circle form-error-icon"></i>
+          <span class="error-message"></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="userEmail">Email *</label>
+        <input type="email" id="userEmail" name="email" class="form-input" required>
+        <div id="userEmailError" class="form-error hidden">
+          <i class="fas fa-exclamation-circle form-error-icon"></i>
+          <span class="error-message"></span>
+        </div>
+      </div>
+
+      <div class="form-group" id="passwordGroup">
+        <label for="userPassword">Contraseña *</label>
+        <div class="form-input-with-icon">
+          <input type="password" id="userPassword" name="password" class="form-input" required>
+          <button type="button" class="form-input-toggle" id="passwordToggle" aria-label="Mostrar contraseña"
+            title="Mostrar/Ocultar contraseña">
+            <i class="fas fa-eye form-input-toggle-icon" id="passwordToggleIcon"></i>
+          </button>
+        </div>
+        <small class="form-help">Mínimo 8 caracteres, una mayúscula, una minúscula y un número</small>
+        <div id="userPasswordError" class="form-error hidden">
+          <i class="fas fa-exclamation-circle form-error-icon"></i>
+          <span class="error-message"></span>
+        </div>
+      </div>
+
+      <div class="form-group" id="confirmPasswordGroup">
+        <label for="userConfirmPassword">Confirmar Contraseña *</label>
+        <div class="form-input-with-icon">
+          <input type="password" id="userConfirmPassword" name="confirmPassword" class="form-input" required>
+          <button type="button" class="form-input-toggle" id="confirmPasswordToggle" aria-label="Mostrar contraseña"
+            title="Mostrar/Ocultar contraseña">
+            <i class="fas fa-eye form-input-toggle-icon" id="confirmPasswordToggleIcon"></i>
+          </button>
+        </div>
+        <div id="userConfirmPasswordError" class="form-error hidden">
+          <i class="fas fa-exclamation-circle form-error-icon"></i>
+          <span class="error-message"></span>
+        </div>
+      </div>
+
+      <div class="form-group" id="roleGroup">
+        <label for="userRole">Rol *</label>
+        <select id="userRole" name="role" class="form-input" required>
+          <option value="">Seleccionar rol</option>
+          <option value="property_horizontal">Propiedad Horizontal</option>
+          <option value="residential">Residencial</option>
+          <option value="censo_horizontal">Censo Horizontal</option>
+          <option value="censo_residencial">Censo Residencial</option>
+        </select>
+        <div id="userRoleError" class="form-error hidden">
+          <i class="fas fa-exclamation-circle form-error-icon"></i>
+          <span class="error-message"></span>
+        </div>
+      </div>
+
+      <div class="form-group" id="activeGroup">
+        <label class="checkbox-label">
+          <input type="checkbox" id="userActive" name="active" checked>
+          <span>Usuario activo</span>
+        </label>
+      </div>
+
+      <div class="user-modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeUserModal()">Cancelar</button>
+        <button type="submit" class="btn-save">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>

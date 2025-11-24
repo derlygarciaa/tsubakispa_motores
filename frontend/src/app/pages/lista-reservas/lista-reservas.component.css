@@ -1,0 +1,168 @@
+*{
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+.container{
+  display: flex;
+  height: 100vh;
+}
+
+.navbar{
+  padding: 20px;
+  height: 100vh;
+  width: 250px;
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 2px solid #DDDDDD;
+}
+
+.logo{
+  width: 120px;
+  margin: 10px 0px;
+}
+
+.h1-1{
+  color: #0A376E;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: "Alegreya";
+}
+
+.nav-counter{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.iconos{
+  display: flex;
+  flex-direction: column;
+  margin: 0px 10px;
+  position: relative;
+  width: 100%;
+}
+
+.iconos:hover{
+  background-color: #DAE9FC;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.nav-enlace{
+  padding: 10px 12px 10px 40px;
+}
+
+i{
+  color: #0A376E;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+a{
+  text-decoration: none;
+  color: #0C4284;
+  font-size: 20px;
+  font-family: "Alegreya";
+}
+
+.nav-boton {
+  background-color: #969696;
+  color: aliceblue;
+  padding: 10px 0;
+  border: 2px solid aliceblue;
+  display: none;
+}
+
+.listado{
+  flex: 1;
+  margin: 20px;
+}
+
+.h1-2{
+  color: #0A376E;
+  font-size: 32px;
+  font-family: "Alegreya";
+}
+
+.counter1{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+}
+
+/* Barra de búsqueda */
+.search-container {
+  flex: 1;
+  position: relative;
+  min-width: 250px;
+}
+
+.search-input {
+  width: 400px;
+  padding: 5px 8px 5px 35px;
+  border: 1px solid #DDDDDD;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0C4284;
+  box-shadow: 1px;
+}
+
+.search-icon {
+  color: #0A376E;
+  position: absolute;
+  right:12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.boton-container{
+  flex: end;
+  position: relative;
+  align-items: center;
+}
+
+.boton-crear{
+  width: 120px;
+  padding: 10px 8px 10px 30px;
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-family: "Alegreya";
+  font-size: 14px;
+  background: #1473E6;
+}
+
+.icono-boton{
+  color: white;
+  position: absolute;
+  left:20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.boton-crear:active{
+  transition: all 0.2s;
+  background-color: #0C4284;
+}
+
+.tabla-reserva{
+  margin-top: 30px;
+  width: 100%;
+  border: 1px solid #DDDDDD ;
+}

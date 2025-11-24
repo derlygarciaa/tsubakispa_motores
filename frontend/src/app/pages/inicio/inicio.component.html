@@ -1,0 +1,40 @@
+<body>
+  <div class="container">
+    <section class="navbar">
+      <img src="/assets/images/logo.jpg" alt="" class="logo">
+      <h1 class="h1-1">TSUBAKI SPA</h1>
+      <nav class="nav-counter">
+        <div class="iconos" routerLink="/inicio">
+          <i class="fa-solid fa-calendar"></i>
+          <a class="nav-enlace desaparece">Calendario</a>
+        </div>
+        <div class="iconos" routerLink="/lista">
+          <i class="fa-solid fa-receipt"></i>
+          <a class="nav-enlace desaparece">Reservas</a>
+        </div>
+        <div class="iconos">
+          <i class="fa-solid fa-circle-user"></i>
+          <a class="nav-enlace desaparece">Mi perfil</a>
+        </div>
+        <div class="iconos">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <a class="nav-enlace desaparece">Cerrar Sesión</a>
+        </div>
+      </nav>
+    </section>
+
+    <section class="calendario">
+      <h1 class="h1-2">CALENDARIO DE RESERVAS</h1>
+      <section class="counter1">
+        <div class="boton-container">
+          <i class="fa-solid fa-circle-plus icono-boton"></i>
+          <button type="submit" class="boton-crear" routerLink="/reserva">CREAR</button>
+        </div>
+      </section>
+      <section class="counter2">
+        <!-- Aquí va el calendario -->
+
+      </section>
+    </section>
+  </div>
+</body>

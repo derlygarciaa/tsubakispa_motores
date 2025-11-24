@@ -1,0 +1,31 @@
+<header class="header">
+  <div class="login">
+    <form [formGroup]="formLogin" (ngSubmit)="iniciarSesion()" class="formulario">
+      <!--formgroup es el que conecta este form con el componente de login, cuando se llenan los inputs lo valida para iniciar secion-->
+      <img src="/assets/images/logo.jpg" alt="" class="logo">
+      <h1>INICIAR SESIÓN</h1>
+      <div class="inputs">
+        <i class="fa-solid fa-envelope"></i>
+        <input type="email" id="Email" name="Email" autocomplete="email" formControlName="email" placeholder="Email"
+          class="input" required>
+        <!--formcontrolname es el que comprueba lo que se puso en ese formgroup del componente login-->
+      </div>
+      <div class="inputs">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="password" name="password" autocomplete="current-password" formControlName="password"
+          placeholder="Contraseña" class="input" required>
+        <button type="button" class="ojo">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+      </div>
+      <div class="password">
+        <label for="recordame"><input type="checkbox" id="recordame" name="recordame" class="label">Recordarme</label>
+        <a href="">¿Olvido su contraseña?</a>
+      </div>
+      <button type="submit" class="boton">Ingresar</button>
+      <div class="registrer">
+        <p>¿No tienes una cuenta? <a href="" routerLink="registro">Registrate</a></p>
+      </div>
+    </form>
+  </div>
+</header>

@@ -11,7 +11,7 @@ class ReservaController extends Controller
     //funcion para mostrar todas las reservas
     public function index() //getReservas
     {
-        $reserva = Reserva::all();
+        $reserva = Reserva::with('Usuario')->get();
 
         if ($reserva->isEmpty()) {
             $data = [
@@ -27,7 +27,6 @@ class ReservaController extends Controller
     public function store(Request $request) //addReserva
     {
         $validator = validator::make($request->all(), [
-            'usuario_id' => 'required|integer|exists:usuarios,id',
             'fecha' => 'required|date',
             'hora_inicio' => 'required|date_format:H:i',
             'hora_final' => 'required|date_format:H:i',
@@ -44,8 +43,7 @@ class ReservaController extends Controller
         }
 
         $reserva = Reserva::create([
-            'usuario_id' => $request->usuario_id,
-            //'usuario_id' => auth()->id(), 
+            'usuario_id' => auth()->id(), 
             //auth es una funcion de laravel en autenticacion y se usa para asignar auto. el id
             //en este caso devuelve el id del usuario, es decir, el usuario que esta realizando la accion
             'fecha' => $request->fecha,

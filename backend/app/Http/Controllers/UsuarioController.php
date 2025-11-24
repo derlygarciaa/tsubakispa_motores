@@ -28,12 +28,11 @@ class UsuarioController extends Controller
     public function store(Request $request)
     {
         $validator = validator::make($request->all(), [
-            'rol_id' => 'required',
             'nombres' => 'required',
             'apellidos' => 'required',
             'telefono' => 'required|digits:10',
             'email' => 'required|email|unique:usuario',
-            'password' => 'required|confirmed'
+            'password' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -46,7 +45,7 @@ class UsuarioController extends Controller
         }
 
         $Usuarios = Usuario::create([
-            'rol_id' => $request->rol_id,
+            'rol_id' => 2, //queda por defecto como usuario
             'nombres' => $request->nombres,
             'apellidos' => $request->apellidos,
             'telefono' => $request->telefono,
@@ -130,7 +129,7 @@ class UsuarioController extends Controller
             'telefono' => 'required|digits:10',
             'email' => 'required|email|unique:usuarios,email,' . $id,
             // para que no bloquee ese mismo correo al actualizar
-            'password' => 'required|confirmed'
+            'password' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -179,7 +178,7 @@ class UsuarioController extends Controller
             'telefono' => 'digits:10',
             'email' => 'email|unique:usuarios,email,' . $id,
             // para que no bloquee ese mismo correo al actualizar
-            'password' => 'max:255|confirmed'
+            'password' => 'max:255'
         ]);
 
         if ($validator->fails()) {
