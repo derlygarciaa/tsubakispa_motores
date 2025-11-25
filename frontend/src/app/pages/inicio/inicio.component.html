@@ -1,40 +1,98 @@
 <body>
   <div class="container">
     <section class="navbar">
-      <img src="/assets/images/logo.jpg" alt="" class="logo">
+      <img src="/assets/images/logo.jpg" alt="Logo Tsubaki Spa" class="logo">
       <h1 class="h1-1">TSUBAKI SPA</h1>
       <nav class="nav-counter">
         <div class="iconos" routerLink="/inicio">
           <i class="fa-solid fa-calendar"></i>
-          <a class="nav-enlace desaparece">Calendario</a>
+          <a class="nav-enlace">Calendario</a>
         </div>
-        <div class="iconos" routerLink="/lista">
+        <div class="iconos" *ngIf="isAdmin" routerLink="/lista">
           <i class="fa-solid fa-receipt"></i>
-          <a class="nav-enlace desaparece">Reservas</a>
+          <a class="nav-enlace">Reservas</a>
         </div>
         <div class="iconos">
           <i class="fa-solid fa-circle-user"></i>
-          <a class="nav-enlace desaparece">Mi perfil</a>
+          <a class="nav-enlace">{{ currentUser?.nombres || 'Mi perfil' }}</a>
         </div>
-        <div class="iconos">
+        <div class="iconos" (click)="cerrarSesion()">
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          <a class="nav-enlace desaparece">Cerrar Sesión</a>
+          <a class="nav-enlace">Cerrar Sesión</a>
         </div>
       </nav>
     </section>
 
-    <section class="calendario">
-      <h1 class="h1-2">CALENDARIO DE RESERVAS</h1>
-      <section class="counter1">
-        <div class="boton-container">
-          <i class="fa-solid fa-circle-plus icono-boton"></i>
-          <button type="submit" class="boton-crear" routerLink="/reserva">CREAR</button>
+    <section class="calendario-container">
+      <!-- Header con titulo y acciones -->
+      <div class="header-section">
+        <div class="header-left">
+          <h1 class="h1-2">
+            <i class="fa-solid fa-calendar-days"></i>
+            CALENDARIO DE RESERVAS
+          </h1>
+          <p class="subtitle" *ngIf="currentUser">
+            Bienvenido, <strong>{{ currentUser.nombres }} {{ currentUser.apellidos }}</strong>
+            <span class="badge-rol" [class.badge-admin]="isAdmin">
+              {{ isAdmin ? 'Administrador' : 'Usuario' }}
+            </span>
+          </p>
         </div>
-      </section>
-      <section class="counter2">
-        <!-- Aquí va el calendario -->
+        <div class="header-actions">
+          <button class="boton-actualizar" (click)="recargarCalendario()" title="Actualizar calendario" [disabled]="isLoadingReservas">
+            <i class="fa-solid fa-arrows-rotate" [class.fa-spin]="isLoadingReservas"></i>
+            {{ isLoadingReservas ? 'Cargando...' : 'Actualizar' }}
+          </button>
+          <button class="boton-crear" (click)="crearReserva()">
+            <i class="fa-solid fa-circle-plus"></i>
+            Nueva Reserva
+          </button>
+        </div>
+      </div>
 
-      </section>
+      <!-- colores -->
+      <div class="leyenda">
+        <div class="leyenda-item">
+          <span class="color-badge confirmada"></span>
+          <span>Confirmada</span>
+        </div>
+        <div class="leyenda-item">
+          <span class="color-badge pendiente"></span>
+          <span>Pendiente</span>
+        </div>
+        <div class="leyenda-item">
+          <span class="color-badge cancelada"></span>
+          <span>Cancelada</span>
+        </div>
+      </div>
+
+      <!-- contenedor del calendario -->
+      <div class="calendario-wrapper">
+        <full-calendar 
+          *ngIf="isBrowser && !isLoadingReservas"
+          [options]="calendarOptions">
+        </full-calendar>
+        
+        <!-- Spinner de carga -->
+        <div class="loading-spinner" *ngIf="isLoadingReservas">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <p>Cargando reservas...</p>
+        </div>
+
+        <!-- Mensaje si no está en navegador -->
+        <div class="loading-spinner" *ngIf="!isBrowser">
+          <i class="fa-solid fa-calendar"></i>
+          <p>Inicializando calendario...</p>
+        </div>
+      </div>
+
+      <!-- Instrucciones -->
+      <div class="instrucciones">
+        <p>
+          <i class="fa-solid fa-circle-info"></i>
+          <strong>Tip:</strong> Haz clic en una fecha para crear una nueva reserva o en una reserva existente para ver detalles.
+        </p>
+      </div>
     </section>
   </div>
 </body>

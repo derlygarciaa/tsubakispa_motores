@@ -90,15 +90,63 @@ class AuthController extends Controller
         }
     }
 
+    //funcion para obtener el usuario autenticado
     public function getUser()
     {
-        $usuario = Auth::user(); //para obtener el usuario actual segun el token, es decir, validar ese token generado
-        return response()->json($usuario, 200);
+        try {
+            $usuario = Auth::user();
+            $usuario->load('rol:id,tipo');
+            
+            return response()->json([
+                'success' => true,
+                'data' => $usuario,
+                'message' => 'Usuario obtenido exitosamente'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el usuario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
+    //funcion para renovar el token
+    public function refresh()
+    {
+        try {
+            $newToken = JWTAuth::parseToken()->refresh();
+            
+            return response()->json([
+                'success' => true,
+                'token' => $newToken,
+                'message' => 'Token renovado exitosamente'
+            ], 200);
+        } catch (JWTException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo renovar el token',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    //funcion para cerrar la sesion del usuario
     public function logout()
     {
-        JWTAuth::invalidate(JWTAuth::getToken()); //invalida el token actual luego de cerrar seccion, es decir, el que se genero al entrar
-        return response()->json(['message' => 'Sección cerrada, exitosamente'], 200);
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Sesión cerrada exitosamente'
+            ], 200);
+        } catch (JWTException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cerrar sesión',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

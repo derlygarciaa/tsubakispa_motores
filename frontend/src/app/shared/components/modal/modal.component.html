@@ -1,0 +1,33 @@
+<div 
+  *ngIf="isOpen" 
+  class="modal-overlay" 
+  (click)="onBackdropClick($event)"
+  (keydown)="handleKeyDown($event)"
+  tabindex="0">
+  
+  <div class="modal-container" [ngClass]="'modal-' + size">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">{{ title }}</h2>
+      <button 
+        *ngIf="showCloseButton"
+        type="button" 
+        class="modal-close-btn" 
+        (click)="closeModal()"
+        aria-label="Cerrar modal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Footer  -->
+    <div class="modal-footer">
+      <ng-content select="[modal-footer]"></ng-content>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,247 @@
+<app-modal 
+  [isOpen]="isOpen" 
+  [title]="'Editar Reserva'" 
+  [size]="'large'"
+  (onClose)="cerrarModal()">
+  
+  <!-- Formulario de edición -->
+  <form [formGroup]="formEditar" (ngSubmit)="guardarCambios()" class="form-editar">
+    
+    <!-- Sección: Información del Cliente -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fa-solid fa-user"></i>
+        <h3>Información del Cliente</h3>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="usuario_id">Cliente *</label>
+          <select 
+            id="usuario_id" 
+            formControlName="usuario_id" 
+            class="form-input"
+            [class.input-error]="hasError('usuario_id')">
+            <option value="">-- Selecciona un cliente --</option>
+            <option *ngFor="let usuario of usuarios" [value]="usuario.id">
+              {{ usuario.nombres }} {{ usuario.apellidos }} - {{ usuario.email }}
+            </option>
+          </select>
+          <span *ngIf="hasError('usuario_id')" class="error-message">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            {{ getErrorMessage('usuario_id') }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="telefono_contacto">Teléfono de Contacto</label>
+          <input 
+            type="tel" 
+            id="telefono_contacto" 
+            formControlName="telefono_contacto" 
+            class="form-input"
+            [class.input-error]="hasError('telefono_contacto')"
+            placeholder="3001234567">
+          <span *ngIf="hasError('telefono_contacto')" class="error-message">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            {{ getErrorMessage('telefono_contacto') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección: Servicio -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fa-solid fa-spa"></i>
+        <h3>Servicio</h3>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="servicio_id">Servicio *</label>
+          <select 
+            id="servicio_id" 
+            formControlName="servicio_id" 
+            class="form-input"
+            [class.input-error]="hasError('servicio_id')">
+            <option value="">-- Selecciona un servicio --</option>
+            <option *ngFor="let servicio of servicios" [value]="servicio.id">
+              {{ servicio.nombre }} - {{ formatearPrecio(servicio.precio) }} ({{ servicio.duracion_minutos }}min)
+            </option>
+          </select>
+          <span *ngIf="hasError('servicio_id')" class="error-message">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            {{ getErrorMessage('servicio_id') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección: Fecha y Horario -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fa-solid fa-calendar-days"></i>
+        <h3>Fecha y Horario</h3>
+      </div>
+
+      <div class="form-row three-cols">
+        <div class="form-group">
+          <label for="fecha">Fecha *</label>
+          <input 
+            type="date" 
+            id="fecha" 
+            formControlName="fecha" 
+            [min]="minDate"
+            class="form-input"
+            [class.input-error]="hasError('fecha')">
+          <span *ngIf="hasError('fecha')" class="error-message">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            {{ getErrorMessage('fecha') }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="hora_inicio">Hora Inicio *</label>
+          <select 
+            id="hora_inicio" 
+            formControlName="hora_inicio" 
+            class="form-input"
+            [class.input-error]="hasError('hora_inicio')">
+            <option value="">-- Selecciona --</option>
+            <option *ngFor="let horario of horariosDisponibles" [value]="horario">
+              {{ horario }}
+            </option>
+          </select>
+          <span *ngIf="hasError('hora_inicio')" class="error-message">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            {{ getErrorMessage('hora_inicio') }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="hora_final">Hora Final *</label>
+          <select 
+            id="hora_final" 
+            formControlName="hora_final" 
+            class="form-input"
+            [class.input-error]="hasError('hora_final')">
+            <option value="">-- Selecciona --</option>
+            <option *ngFor="let horario of horariosDisponibles" [value]="horario">
+              {{ horario }}
+            </option>
+          </select>
+          <span *ngIf="hasError('hora_final')" class="error-message">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            {{ getErrorMessage('hora_final') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección: Información Adicional -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fa-solid fa-circle-info"></i>
+        <h3>Información Adicional</h3>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="numero_personas">Número de Personas *</label>
+          <input 
+            type="number" 
+            id="numero_personas" 
+            formControlName="numero_personas" 
+            min="1"
+            max="10"
+            class="form-input"
+            [class.input-error]="hasError('numero_personas')">
+          <span *ngIf="hasError('numero_personas')" class="error-message">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            {{ getErrorMessage('numero_personas') }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio (COP)</label>
+          <input 
+            type="text" 
+            id="precio" 
+            formControlName="precio" 
+            class="form-input"
+            readonly>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label for="observaciones">Observaciones</label>
+          <textarea 
+            id="observaciones" 
+            formControlName="observaciones" 
+            rows="3"
+            class="form-input form-textarea"
+            [class.input-error]="hasError('observaciones')"
+            placeholder="Comentarios adicionales sobre la reserva..."></textarea>
+          <span *ngIf="hasError('observaciones')" class="error-message">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            {{ getErrorMessage('observaciones') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección: Estado -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fa-solid fa-flag"></i>
+        <h3>Estado de la Reserva</h3>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label>Estado *</label>
+          <div class="estado-options">
+            <label 
+              *ngFor="let estado of estadosDisponibles" 
+              class="estado-option"
+              [class.selected]="formEditar.get('estado')?.value === estado.valor">
+              <input 
+                type="radio" 
+                formControlName="estado" 
+                [value]="estado.valor"
+                class="estado-radio">
+              <span class="estado-badge" [style.background-color]="estado.color">
+                {{ estado.label }}
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Footer con botones -->
+  <div modal-footer>
+    <button 
+      type="button" 
+      class="btn btn-secondary" 
+      (click)="cerrarModal()"
+      [disabled]="isLoading">
+      <i class="fa-solid fa-xmark"></i>
+      Cancelar
+    </button>
+    <button 
+      type="submit" 
+      class="btn btn-primary" 
+      (click)="guardarCambios()"
+      [disabled]="isLoading || formEditar.invalid">
+      <i class="fa-solid" [class.fa-spinner]="isLoading" [class.fa-spin]="isLoading" [class.fa-save]="!isLoading"></i>
+      {{ isLoading ? 'Guardando...' : 'Guardar Cambios' }}
+    </button>
+  </div>
+
+</app-modal>
+

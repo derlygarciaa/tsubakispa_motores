@@ -14,8 +14,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        IsUsuarioAuth::class;
-        IsAdmin::class;
+        // Middleware global API con CORS
+        $middleware->api(prepend: [
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
+
+        // Alias de middleware personalizados
+        $middleware->alias([
+            'auth.usuario' => IsUsuarioAuth::class,
+            'admin' => IsAdmin::class,
+        ]);
 
         /*$middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,

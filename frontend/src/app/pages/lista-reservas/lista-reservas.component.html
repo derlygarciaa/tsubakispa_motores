@@ -1,7 +1,7 @@
 <body>
   <div class="container">
     <section class="navbar">
-      <img src="/assets/images/logo.jpg" alt="" class="logo">
+      <img src="/assets/images/logo.jpg" alt="Logo Tsubaki Spa" class="logo">
       <h1 class="h1-1">TSUBAKI SPA</h1>
       <nav class="nav-counter">
         <div class="iconos" routerLink="/inicio">
@@ -16,7 +16,7 @@
           <i class="fa-solid fa-circle-user"></i>
           <a class="nav-enlace desaparece">Mi perfil</a>
         </div>
-        <div class="iconos">
+        <div class="iconos" routerLink="/">
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
           <a class="nav-enlace desaparece">Cerrar Sesión</a>
         </div>
@@ -28,7 +28,7 @@
       <section class="counter1">
         <div class="search-container">
           <i class="fas fa-search search-icon"></i>
-          <input type="text" id="searchInput" class="search-input" placeholder="Buscar reserva por nombre">
+          <input type="text" id="searchInput" class="search-input" placeholder="Buscar reserva por nombre" (input)="buscarReserva($event)">
         </div>
         <div class="boton-container">
           <i class="fa-solid fa-circle-plus icono-boton"></i>
@@ -44,15 +44,34 @@
               <th>Hora Inicio</th>
               <th>Hora Final</th>
               <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let reserva of listaReserva">
-              <td>{{reserva.usuario.nombres}} {{reserva.usuario.apellidos}}</td>
-              <td>{{reserva.fecha}}</td>
+            <tr *ngFor="let reserva of listaReservasFiltradas">
+              <td>{{reserva.usuario?.nombres}} {{reserva.usuario?.apellidos}}</td>
+              <td>{{formatearFecha(reserva.fecha)}}</td>
               <td>{{reserva.hora_inicio}}</td>
               <td>{{reserva.hora_final}}</td>
-              <td>{{reserva.estado}}</td>
+              <td>
+                <span [class]="getEstadoClass(reserva.estado)">{{reserva.estado}}</span>
+              </td>
+              <td>
+                <button class="btn-editar" (click)="abrirModalEditar(reserva)" title="Editar reserva">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                  Editar
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="isLoading">
+              <td colspan="5" style="text-align: center; padding: 2rem;">
+                Cargando reservas...
+              </td>
+            </tr>
+            <tr *ngIf="!isLoading && listaReservasFiltradas.length === 0">
+              <td colspan="6" style="text-align: center; padding: 2rem;">
+                No se encontraron reservas.
+              </td>
             </tr>
           </tbody>
         </table>
@@ -60,3 +79,11 @@
     </section>
   </div>
 </body>
+
+<!-- Modal de Edición -->
+<app-editar-reserva-modal
+  [isOpen]="modalEditarAbierto"
+  [reserva]="reservaSeleccionada"
+  (onClose)="cerrarModalEditar()"
+  (onSave)="onGuardarReserva($event)">
+</app-editar-reserva-modal>

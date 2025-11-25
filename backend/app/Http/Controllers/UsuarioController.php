@@ -16,12 +16,19 @@ class UsuarioController extends Controller
 
         if ($Usuarios->isEmpty()) {
             $data = [
+                'success' => false,
                 'message' => 'No se encontraron usuarios',
                 'status' => 404
             ];
             return response()->json($data, 404); //404 es not found - no se encuentra el recurso solicitado 
         }
-        return response()->json($Usuarios, 200); //200 es OK - todo salio bien, da el recurso
+        
+        $data = [
+            'success' => true,
+            'data' => $Usuarios,
+            'status' => 200
+        ];
+        return response()->json($data, 200); 
     }
 
     //funcion para ingresar los datos requeridos para crear un usuario
@@ -37,6 +44,7 @@ class UsuarioController extends Controller
 
         if ($validator->fails()) {
             $data = [
+                'success' => false,
                 'message' => 'Error en la validacion de los datos',
                 'errors' => $validator->errors(),
                 'status' => 400 //400 es bad request - peticion mal formada o incompleta
@@ -55,13 +63,16 @@ class UsuarioController extends Controller
 
         if (!$Usuarios) {
             $data = [
+                'success' => false,
                 'message' => 'Error al crear el usuario',
                 'status' => 500 //500 es internal server error - error inesperado en el servidor
             ];
             return response()->json($data, 500);
         }
          $data = [
-            'usuario' => $Usuarios,
+            'success' => true,
+            'data' => $Usuarios,
+            'message' => 'Usuario creado exitosamente',
             'status' => 201
          ];
          return response()->json($data, 201); // 201 es created - se creo un nuevo recurso (usuario)   
@@ -74,6 +85,7 @@ class UsuarioController extends Controller
 
         if(!$usuario){
             $data = [
+                'success' => false,
                 'message' => 'Usuario no encontrado',
                 'status' => 404
             ];
@@ -81,7 +93,8 @@ class UsuarioController extends Controller
         }
 
         $data = [
-            'usuario' => $usuario,
+            'success' => true,
+            'data' => $usuario,
             'status' => 200
         ];
             return response()->json($data, 200);
@@ -94,6 +107,7 @@ class UsuarioController extends Controller
 
         if(!$usuario){
             $data = [
+                'success' => false,
                 'message' => 'Usuario no encontrado',
                 'status' => 404
             ];
@@ -103,6 +117,7 @@ class UsuarioController extends Controller
         $usuario->delete();
 
         $data = [
+            'success' => true,
             'message' => 'Usuario eliminado',
             'status' => 200
         ];
@@ -116,6 +131,7 @@ class UsuarioController extends Controller
 
         if(!$usuario){
             $data = [
+                'success' => false,
                 'message' => 'Usuario no encontrado',
                 'status' => 404
             ];
@@ -134,6 +150,7 @@ class UsuarioController extends Controller
 
         if ($validator->fails()) {
             $data = [
+                'success' => false,
                 'message' => 'Error en la validacion de los datos',
                 'errors' => $validator->errors(),
                 'status' => 400 //400 es bad request - peticion mal formada o incompleta
@@ -151,8 +168,9 @@ class UsuarioController extends Controller
         $usuario->save();
 
         $data = [
+            'success' => true,
+            'data' => $usuario,
             'message' => 'Usuario actualizado',
-            'usuario' => $usuario,
             'status' => 200
         ];
             return response()->json($data, 200);
@@ -165,6 +183,7 @@ class UsuarioController extends Controller
 
         if(!$usuario){
             $data = [
+                'success' => false,
                 'message' => 'Usuario no encontrado',
                 'status' => 404
             ];
@@ -183,6 +202,7 @@ class UsuarioController extends Controller
 
         if ($validator->fails()) {
             $data = [
+                'success' => false,
                 'message' => 'Error en la validacion de los datos',
                 'errors' => $validator->errors(),
                 'status' => 400 //400 es bad request - peticion mal formada o incompleta
@@ -217,8 +237,9 @@ class UsuarioController extends Controller
         $usuario->save();
 
         $data = [
+            'success' => true,
+            'data' => $usuario,
             'message' => 'Usuario actualizado',
-            'usuario' => $usuario,
             'status' => 200
         ];
             return response()->json($data, 200);

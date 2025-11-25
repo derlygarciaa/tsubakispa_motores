@@ -14,14 +14,24 @@ class UsuariosTableSeeder extends Seeder
      */
     public function run(): void
     {
-        //Insertar un registro como administrador
+        // Insertar usuario administrador
         Usuario::create([
-            'rol_id' => 1, //1 porque fue como se definio en el seeder de roles
-            'nombres' => 'Derly Dayana',
-            'apellidos' => 'Garcia Carrillo',
-            'telefono' => '3224683285',
-            'email' => 'derly.gar24@gmail.com',
-            'contraseña' => Hash::make('contraseña'),
+            'rol_id' => 1, // Admin
+            'nombres' => 'Admin',
+            'apellidos' => 'Tsubaki Spa',
+            'telefono' => '3001234567',
+            'email' => 'admin@tsubakispa.com',
+            'password' => Hash::make('admin123'),
+        ]);
+
+        // Insertar usuario normal de prueba
+        Usuario::create([
+            'rol_id' => 2, // Usuario normal
+            'nombres' => 'Usuario',
+            'apellidos' => 'Demo',
+            'telefono' => '3009876543',
+            'email' => 'usuario@tsubakispa.com',
+            'password' => Hash::make('usuario123'),
         ]);
     }
 }

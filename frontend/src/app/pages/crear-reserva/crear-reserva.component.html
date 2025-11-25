@@ -1,91 +1,446 @@
-<!-- Modal de Usuario -->
-<div class="user-modal" id="userModal">
-  <div class="user-modal-overlay" onclick="closeUserModal()"></div>
-  <div class="user-modal-content">
-    <div class="user-modal-header">
-      <h2 id="userModalTitle">Crear Usuario</h2>
-      <button class="user-modal-close" onclick="closeUserModal()">
-        <i class="fas fa-times"></i>
+<div class="container">
+  <!-- NAVBAR LATERAL -->
+  <nav class="navbar">
+    <img src="/assets/images/logo.jpg" alt="Logo Tsubaki Spa" class="logo">
+    <h1 class="h1-1">Tsubaki Spa</h1>
+    
+    <div class="nav-counter">
+      <a routerLink="/inicio" class="iconos">
+        <i class="fa-solid fa-house"></i>
+        <span class="nav-enlace">Inicio</span>
+      </a>
+      
+      <a *ngIf="currentUser?.rol_id === 1" routerLink="/reservas" class="iconos">
+        <i class="fa-solid fa-calendar-check"></i>
+        <span class="nav-enlace">Reservas</span>
+      </a>
+      
+      <a routerLink="/reserva" class="iconos active">
+        <i class="fa-solid fa-plus-circle"></i>
+        <span class="nav-enlace">Nueva Reserva</span>
+      </a>
+      
+      <a *ngIf="currentUser?.rol_id === 1" routerLink="/usuarios" class="iconos">
+        <i class="fa-solid fa-users"></i>
+        <span class="nav-enlace">Usuarios</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- CONTENEDOR DEL FORMULARIO -->
+  <main class="formulario-container">
+    <!-- Header -->
+    <div class="header-section">
+      <div class="header-left">
+        <h1 class="h1-2">
+          <i class="fa-solid fa-calendar-plus"></i>
+          Nueva Reserva
+        </h1>
+        <p class="subtitle">
+          Completa el formulario para agendar tu cita en Tsubaki Spa
+        </p>
+      </div>
+      <button type="button" (click)="volver()" class="boton-volver">
+        <i class="fa-solid fa-arrow-left"></i>
+        Volver
       </button>
     </div>
-    <form id="userForm" class="user-modal-body">
-      <input type="hidden" id="userId" name="id">
 
-      <div class="form-group">
-        <label for="userName">Nombre Completo *</label>
-        <input type="text" id="userName" name="name" class="form-input" required>
-        <div id="userNameError" class="form-error hidden">
-          <i class="fas fa-exclamation-circle form-error-icon"></i>
-          <span class="error-message"></span>
+    <!-- Formulario -->
+    <div class="formulario-wrapper">
+      <form [formGroup]="formReserva" (ngSubmit)="crearReserva()" class="formulario">
+        
+        <!-- SECCIÓN 1: INFORMACIÓN DEL USUARIO -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fa-solid fa-user"></i>
+            <h3>Información del Cliente</h3>
+          </div>
+          
+          <!-- Selector de Usuario (Solo Admin) -->
+          <div class="form-group" *ngIf="isAdmin">
+            <label for="usuario_id" class="form-label">
+              <i class="fa-solid fa-user-tag"></i>
+              Seleccionar Cliente *
+            </label>
+            
+            <!-- Indicador de carga -->
+            <div *ngIf="isLoadingUsuarios" class="loading-message">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              Cargando usuarios...
+            </div>
+            
+            <!-- Select de usuarios -->
+            <select 
+              *ngIf="!isLoadingUsuarios"
+              id="usuario_id" 
+              formControlName="usuario_id" 
+              class="form-input"
+              [class.input-error]="hasError('usuario_id')">
+              <option value="">-- Selecciona un cliente --</option>
+              <option *ngFor="let usuario of usuarios" [value]="usuario.id">
+                {{ usuario.nombres }} {{ usuario.apellidos }} - {{ usuario.email }}
+              </option>
+            </select>
+            
+            <!-- Mensaje si no hay usuarios -->
+            <div *ngIf="!isLoadingUsuarios && usuarios.length === 0" class="info-message">
+              <i class="fa-solid fa-info-circle"></i>
+              No hay usuarios disponibles
+            </div>
+            
+            <span *ngIf="hasError('usuario_id')" class="error-message">
+              <i class="fa-solid fa-exclamation-circle"></i>
+              {{ getErrorMessage('usuario_id') }}
+            </span>
+          </div>
+          
+          <!-- Información del Usuario Actual (Solo Usuario Normal) -->
+          <div class="info-card" *ngIf="!isAdmin">
+            <div class="info-item">
+              <i class="fa-solid fa-user-circle"></i>
+              <div>
+                <span class="info-label">Cliente:</span>
+                <span class="info-value">{{ currentUser?.nombres }} {{ currentUser?.apellidos }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <i class="fa-solid fa-envelope"></i>
+              <div>
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ currentUser?.email }}</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="userEmail">Email *</label>
-        <input type="email" id="userEmail" name="email" class="form-input" required>
-        <div id="userEmailError" class="form-error hidden">
-          <i class="fas fa-exclamation-circle form-error-icon"></i>
-          <span class="error-message"></span>
+        <!-- SECCIÓN 2: SELECCIÓN DE SERVICIO -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fa-solid fa-spa"></i>
+            <h3>Selecciona tu Servicio</h3>
+          </div>
+
+          <!-- Selector de Servicio -->
+          <div class="form-group">
+            <label for="servicio_id" class="form-label">
+              <i class="fa-solid fa-hand-sparkles"></i>
+              Servicio *
+            </label>
+            <select 
+              id="servicio_id" 
+              formControlName="servicio_id" 
+              class="form-input"
+              [class.input-error]="hasError('servicio_id')">
+              <option value="">-- Selecciona un servicio --</option>
+              <ng-container *ngFor="let cat of categorias">
+                <optgroup *ngIf="cat.valor !== ''" [label]="cat.label">
+                  <option 
+                    *ngFor="let servicio of servicios" 
+                    [value]="servicio.id"
+                    [hidden]="servicio.categoria !== cat.valor">
+                    {{ servicio.nombre }} - {{ formatearPrecio(servicio.precio) }} ({{ servicio.duracion_minutos }}min)
+                  </option>
+                </optgroup>
+              </ng-container>
+            </select>
+            <span *ngIf="hasError('servicio_id')" class="error-message">
+              <i class="fa-solid fa-exclamation-circle"></i>
+              {{ getErrorMessage('servicio_id') }}
+            </span>
+          </div>
+
+          <!-- Card de Servicio Seleccionado -->
+          <div class="servicio-card" *ngIf="servicioSeleccionado">
+            <div class="servicio-header">
+              <i class="fa-solid fa-spa"></i>
+              <h4>{{ servicioSeleccionado.nombre }}</h4>
+              <span class="badge-categoria">{{ servicioSeleccionado.categoria }}</span>
+            </div>
+            <p class="servicio-descripcion" *ngIf="servicioSeleccionado.descripcion">
+              {{ servicioSeleccionado.descripcion }}
+            </p>
+            <div class="servicio-detalles">
+              <div class="detalle-item">
+                <i class="fa-solid fa-clock"></i>
+                <span>{{ servicioSeleccionado.duracion_minutos }} minutos</span>
+              </div>
+              <div class="detalle-item">
+                <i class="fa-solid fa-dollar-sign"></i>
+                <span class="precio">{{ formatearPrecio(servicioSeleccionado.precio) }}</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="form-group" id="passwordGroup">
-        <label for="userPassword">Contraseña *</label>
-        <div class="form-input-with-icon">
-          <input type="password" id="userPassword" name="password" class="form-input" required>
-          <button type="button" class="form-input-toggle" id="passwordToggle" aria-label="Mostrar contraseña"
-            title="Mostrar/Ocultar contraseña">
-            <i class="fas fa-eye form-input-toggle-icon" id="passwordToggleIcon"></i>
+        <!-- SECCIÓN 3: FECHA Y HORA -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fa-solid fa-calendar-alt"></i>
+            <h3>Fecha y Horario</h3>
+          </div>
+
+          <div class="form-row">
+            <!-- Fecha -->
+            <div class="form-group">
+              <label for="fecha" class="form-label">
+                <i class="fa-solid fa-calendar"></i>
+                Fecha *
+              </label>
+              <input 
+                type="date" 
+                id="fecha" 
+                formControlName="fecha" 
+                [min]="minDate"
+                class="form-input"
+                [class.input-error]="hasError('fecha')">
+              <span *ngIf="hasError('fecha')" class="error-message">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                {{ getErrorMessage('fecha') }}
+              </span>
+            </div>
+
+            <!-- Número de Personas -->
+            <div class="form-group">
+              <label for="numero_personas" class="form-label">
+                <i class="fa-solid fa-users"></i>
+                Personas
+              </label>
+              <input 
+                type="number" 
+                id="numero_personas" 
+                formControlName="numero_personas" 
+                min="1" 
+                max="10"
+                class="form-input"
+                [class.input-error]="hasError('numero_personas')">
+              <span *ngIf="hasError('numero_personas')" class="error-message">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                {{ getErrorMessage('numero_personas') }}
+              </span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <!-- Hora Inicio -->
+            <div class="form-group">
+              <label for="hora_inicio" class="form-label">
+                <i class="fa-solid fa-clock"></i>
+                Hora Inicio *
+              </label>
+              <select 
+                id="hora_inicio" 
+                formControlName="hora_inicio" 
+                class="form-input"
+                [class.input-error]="hasError('hora_inicio')">
+                <option value="">-- Selecciona --</option>
+                <option *ngFor="let hora of horariosDisponibles" [value]="hora">
+                  {{ hora }}
+                </option>
+              </select>
+              <span *ngIf="hasError('hora_inicio')" class="error-message">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                {{ getErrorMessage('hora_inicio') }}
+              </span>
+            </div>
+
+            <!-- Hora Final -->
+            <div class="form-group">
+              <label for="hora_final" class="form-label">
+                <i class="fa-solid fa-clock"></i>
+                Hora Final *
+              </label>
+              <select 
+                id="hora_final" 
+                formControlName="hora_final" 
+                class="form-input"
+                [class.input-error]="hasError('hora_final')">
+                <option value="">-- Selecciona --</option>
+                <option *ngFor="let hora of horariosDisponibles" [value]="hora">
+                  {{ hora }}
+                </option>
+              </select>
+              <span *ngIf="hasError('hora_final')" class="error-message">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                {{ getErrorMessage('hora_final') }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Duración calculada -->
+          <div class="info-banner" *ngIf="calcularDuracion()">
+            <i class="fa-solid fa-info-circle"></i>
+            <span>Duración total: <strong>{{ formatearDuracion(calcularDuracion()) }}</strong></span>
+          </div>
+
+          <!-- Errores de validación de horarios -->
+          <div class="alert-error" *ngIf="formReserva.errors?.['horaInvalida'] && formReserva.touched">
+            <i class="fa-solid fa-exclamation-triangle"></i>
+            La hora final debe ser posterior a la hora de inicio
+          </div>
+          <div class="alert-error" *ngIf="formReserva.errors?.['duracionMinima'] && formReserva.touched">
+            <i class="fa-solid fa-exclamation-triangle"></i>
+            La duración mínima es de 30 minutos
+          </div>
+          <div class="alert-error" *ngIf="formReserva.errors?.['duracionMaxima'] && formReserva.touched">
+            <i class="fa-solid fa-exclamation-triangle"></i>
+            La duración máxima es de 3 horas
+          </div>
+        </div>
+
+        <!-- SECCIÓN 4: INFORMACIÓN ADICIONAL -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fa-solid fa-info-circle"></i>
+            <h3>Información Adicional</h3>
+          </div>
+
+          <!-- Teléfono de Contacto -->
+          <div class="form-group">
+            <label for="telefono_contacto" class="form-label">
+              <i class="fa-solid fa-phone"></i>
+              Teléfono de Contacto
+            </label>
+            <input 
+              type="tel" 
+              id="telefono_contacto" 
+              formControlName="telefono_contacto" 
+              placeholder="Ej: 3001234567"
+              class="form-input"
+              [class.input-error]="hasError('telefono_contacto')">
+            <span *ngIf="hasError('telefono_contacto')" class="error-message">
+              <i class="fa-solid fa-exclamation-circle"></i>
+              {{ getErrorMessage('telefono_contacto') }}
+            </span>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="form-group">
+            <label for="observaciones" class="form-label">
+              <i class="fa-solid fa-comment-alt"></i>
+              Observaciones o Notas Especiales
+            </label>
+            <textarea 
+              id="observaciones" 
+              formControlName="observaciones" 
+              rows="4"
+              placeholder="Ej: Alergias, preferencias, solicitudes especiales..."
+              class="form-input textarea"
+              [class.input-error]="hasError('observaciones')">
+            </textarea>
+            <small class="form-help">
+              {{ formReserva.get('observaciones')?.value?.length || 0 }} / 500 caracteres
+            </small>
+            <span *ngIf="hasError('observaciones')" class="error-message">
+              <i class="fa-solid fa-exclamation-circle"></i>
+              {{ getErrorMessage('observaciones') }}
+            </span>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 5: ESTADO (Solo Admin) -->
+        <div class="form-section" *ngIf="isAdmin">
+          <div class="section-header">
+            <i class="fa-solid fa-check-circle"></i>
+            <h3>Estado de la Reserva</h3>
+          </div>
+
+          <div class="form-group">
+            <label for="estado" class="form-label">
+              <i class="fa-solid fa-toggle-on"></i>
+              Estado
+            </label>
+            <select 
+              id="estado" 
+              formControlName="estado" 
+              class="form-input">
+              <option value="pendiente">Pendiente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="cancelada">Cancelada</option>
+            </select>
+            <small class="form-help">
+              <i class="fa-solid fa-info-circle"></i>
+              Los usuarios normales crean reservas siempre en estado "Pendiente"
+            </small>
+          </div>
+        </div>
+
+        <!-- Mensaje para Usuario Normal -->
+        <div class="info-banner" *ngIf="!isAdmin">
+          <i class="fa-solid fa-info-circle"></i>
+          <span>Tu reserva quedará en estado <strong>Pendiente</strong> hasta que un administrador la confirme.</span>
+        </div>
+
+        <!-- SECCIÓN 6: RESUMEN -->
+        <div class="form-section resumen-section">
+          <div class="section-header">
+            <i class="fa-solid fa-receipt"></i>
+            <h3>Resumen de la Reserva</h3>
+          </div>
+
+          <div class="resumen-card">
+            <div class="resumen-row">
+              <span class="resumen-label">Servicio:</span>
+              <span class="resumen-value">{{ servicioSeleccionado?.nombre || 'No seleccionado' }}</span>
+            </div>
+            <div class="resumen-row">
+              <span class="resumen-label">Fecha:</span>
+              <span class="resumen-value">{{ formReserva.get('fecha')?.value || 'No seleccionada' }}</span>
+            </div>
+            <div class="resumen-row">
+              <span class="resumen-label">Horario:</span>
+              <span class="resumen-value">
+                {{ formReserva.get('hora_inicio')?.value || '--:--' }} - {{ formReserva.get('hora_final')?.value || '--:--' }}
+              </span>
+            </div>
+            <div class="resumen-row">
+              <span class="resumen-label">Duración:</span>
+              <span class="resumen-value">{{ formatearDuracion(calcularDuracion()) || 'No calculada' }}</span>
+            </div>
+            <div class="resumen-row" *ngIf="isAdmin">
+              <span class="resumen-label">Estado:</span>
+              <span class="resumen-value">{{ formReserva.get('estado')?.value | titlecase }}</span>
+            </div>
+            <div class="resumen-row total">
+              <span class="resumen-label">Total a Pagar:</span>
+              <span class="resumen-value precio-total">
+                {{ servicioSeleccionado ? formatearPrecio(servicioSeleccionado.precio) : '$0' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            (click)="volver()" 
+            class="boton-cancelar"
+            [disabled]="isLoading">
+            <i class="fa-solid fa-times"></i>
+            Cancelar
+          </button>
+          
+          <button 
+            type="submit" 
+            class="boton-crear"
+            [disabled]="isLoading || formReserva.invalid">
+            <i class="fa-solid fa-spinner fa-spin" *ngIf="isLoading"></i>
+            <i class="fa-solid fa-check" *ngIf="!isLoading"></i>
+            {{ isLoading ? 'Creando...' : 'Crear Reserva' }}
           </button>
         </div>
-        <small class="form-help">Mínimo 8 caracteres, una mayúscula, una minúscula y un número</small>
-        <div id="userPasswordError" class="form-error hidden">
-          <i class="fas fa-exclamation-circle form-error-icon"></i>
-          <span class="error-message"></span>
-        </div>
-      </div>
+      </form>
+    </div>
 
-      <div class="form-group" id="confirmPasswordGroup">
-        <label for="userConfirmPassword">Confirmar Contraseña *</label>
-        <div class="form-input-with-icon">
-          <input type="password" id="userConfirmPassword" name="confirmPassword" class="form-input" required>
-          <button type="button" class="form-input-toggle" id="confirmPasswordToggle" aria-label="Mostrar contraseña"
-            title="Mostrar/Ocultar contraseña">
-            <i class="fas fa-eye form-input-toggle-icon" id="confirmPasswordToggleIcon"></i>
-          </button>
-        </div>
-        <div id="userConfirmPasswordError" class="form-error hidden">
-          <i class="fas fa-exclamation-circle form-error-icon"></i>
-          <span class="error-message"></span>
-        </div>
+    <!-- Información de horarios -->
+    <div class="info-box">
+      <i class="fa-solid fa-info-circle"></i>
+      <div>
+        <strong>Horario de atención:</strong> Lunes a Sábado de 9:00 AM a 8:00 PM
+        <br>
+        <strong>Nota:</strong> La duración mínima es de 30 minutos y la máxima de 3 horas por reserva.
       </div>
-
-      <div class="form-group" id="roleGroup">
-        <label for="userRole">Rol *</label>
-        <select id="userRole" name="role" class="form-input" required>
-          <option value="">Seleccionar rol</option>
-          <option value="property_horizontal">Propiedad Horizontal</option>
-          <option value="residential">Residencial</option>
-          <option value="censo_horizontal">Censo Horizontal</option>
-          <option value="censo_residencial">Censo Residencial</option>
-        </select>
-        <div id="userRoleError" class="form-error hidden">
-          <i class="fas fa-exclamation-circle form-error-icon"></i>
-          <span class="error-message"></span>
-        </div>
-      </div>
-
-      <div class="form-group" id="activeGroup">
-        <label class="checkbox-label">
-          <input type="checkbox" id="userActive" name="active" checked>
-          <span>Usuario activo</span>
-        </label>
-      </div>
-
-      <div class="user-modal-actions">
-        <button type="button" class="btn-cancel" onclick="closeUserModal()">Cancelar</button>
-        <button type="submit" class="btn-save">Guardar</button>
-      </div>
-    </form>
-  </div>
+    </div>
+  </main>
 </div>
