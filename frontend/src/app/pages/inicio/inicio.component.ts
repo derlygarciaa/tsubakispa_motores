@@ -49,7 +49,7 @@ export class InicioComponent implements OnInit {
       month: 'Mes',
       week: 'Semana',
       day: 'Día',
-      list: 'Lista'
+      list: 'Reservas'
     },
     weekends: true,
     editable: false,
